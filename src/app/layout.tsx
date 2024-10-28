@@ -3,13 +3,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { geistSans, geistMono } from "@/app/fonts";
 
-import {
-  ClerkProvider,
-  SignInButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from "@clerk/nextjs";
+import { ClerkProvider } from "@clerk/nextjs";
 
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";

@@ -3,7 +3,6 @@
 import Image from "next/image";
 
 import {
-  useSignIn,
   SignedIn,
   SignedOut,
   UserButton,
@@ -16,42 +15,41 @@ import Link from "next/link";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
-const HamBurgerButton = () => {
-  const [open, setOpen] = useState(false);
-  return (
-    <Button
-      isIconOnly
-      radius="sm"
-      size="sm"
-      variant="light"
-      data-active={open}
-      onClick={() => setOpen(!open)}
-      className={cn(
-        "flex lg:hidden flex-col items-center justify-evenly group data-[active='true']:justify-center transition-all"
-      )}
-    >
-      <span
-        className={cn(
-          "w-2/3 h-0.5 bg-black transition-all",
-          "group-data-[active='true']:rotate-45",
-          "group-data-[active='true']:translate-y-1/2"
-        )}
-      />
-      <span
-        className={cn(
-          "w-2/3 h-0.5 bg-black  transition-all",
-          "group-data-[active='true']:-rotate-45",
-          "group-data-[active='true']:-translate-y-1/2"
-        )}
-      />
-    </Button>
-  );
-};
+// const HamBurgerButton = () => {
+//   const [open, setOpen] = useState(false);
+//   return (
+//     <Button
+//       isIconOnly
+//       radius="sm"
+//       size="sm"
+//       variant="light"
+//       data-active={open}
+//       onClick={() => setOpen(!open)}
+//       className={cn(
+//         "flex lg:hidden flex-col items-center justify-evenly group data-[active='true']:justify-center transition-all"
+//       )}
+//     >
+//       <span
+//         className={cn(
+//           "w-2/3 h-0.5 bg-black transition-all",
+//           "group-data-[active='true']:rotate-45",
+//           "group-data-[active='true']:translate-y-1/2"
+//         )}
+//       />
+//       <span
+//         className={cn(
+//           "w-2/3 h-0.5 bg-black  transition-all",
+//           "group-data-[active='true']:-rotate-45",
+//           "group-data-[active='true']:-translate-y-1/2"
+//         )}
+//       />
+//     </Button>
+//   );
+// };
 
 export const Header = () => {
   const pathname = usePathname();
   const [redirect, setRedirect] = useState<"sign-in" | "sign-up">();
-  const signIn = useSignIn();
 
   return (
     <header className="w-full flex py-3 px-6 md:px-12 justify-between items-center">
