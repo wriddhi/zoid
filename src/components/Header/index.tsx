@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/Button";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useState } from "react";
-import { cn } from "@/lib/utils";
 
 // const HamBurgerButton = () => {
 //   const [open, setOpen] = useState(false);
