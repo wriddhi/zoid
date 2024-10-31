@@ -52,7 +52,6 @@ const CreationModal = ({ isOpen, onClose }: ModalProps) => {
         if (!old) return [org];
         return [...old, org];
       });
-      if (org) router.push(`/dashboard/${org.id}`);
     },
   });
 
