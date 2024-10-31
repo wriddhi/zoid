@@ -1,5 +1,4 @@
 import { supabase } from "@/db";
-import { baseUrl } from "@/lib/utils";
 import { Org } from "@/types/org";
 import { auth } from "@clerk/nextjs/server";
 

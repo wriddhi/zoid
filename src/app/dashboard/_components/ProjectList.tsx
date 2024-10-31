@@ -141,7 +141,7 @@ export const ProjectList = ({ orgs: organizations }: ProjectListProps) => {
             You have not joined <br /> or <br /> created any organizations.
           </div>
         ) : (
-          orgs.map((org, index) => (
+          orgs.map((org) => (
             <Link
               href={`/dashboard/${org.id}`}
               key={org.id}
