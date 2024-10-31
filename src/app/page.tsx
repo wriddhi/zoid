@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui";
 
 export default function Home() {
   return (
@@ -29,7 +29,12 @@ export default function Home() {
           <i className="border-b-1 border-dashed border-black">trademarks</i>{" "}
           from a global database.
         </p>
-        <Button color="primary" className="primary text-lg">
+        <Button
+          as="a"
+          href="/sign-in"
+          color="primary"
+          className="primary text-lg"
+        >
           Start brainstorming <span className="animate-left-right">-&gt;</span>
         </Button>
       </section>

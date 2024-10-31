@@ -9,7 +9,7 @@ import {
   RedirectToSignIn,
   RedirectToSignUp,
 } from "@clerk/nextjs";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useState } from "react";

@@ -42,7 +42,12 @@ export default function RootLayout({
             geistSans.variable,
             geistMono.variable,
             "antialiased font-sans bg-transparent",
-            "selection:text-white selection:bg-black"
+            "selection:text-white selection:bg-black",
+            "[&_*::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar]:w-2",
+            "[&_*::-webkit-scrollbar-track]:bg-black",
+            "[&::-webkit-scrollbar-track]:bg-black",
+            "[&_*::-webkit-scrollbar-thumb]:bg-slate-400",
+            "[&::-webkit-scrollbar-thumb]:bg-slate-400"
           )}
         >
           <Providers>
