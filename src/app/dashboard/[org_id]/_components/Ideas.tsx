@@ -236,6 +236,7 @@ const EditionModal = ({ isOpen, onClose, organization }: ModalProps) => {
 const DeletionModal = ({ isOpen, onClose, organization }: ModalProps) => {
   const [name, setName] = useState("");
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const { mutate: deleteOrg, isPending: isDeleting } = useMutation({
     mutationFn: async () => {
@@ -243,6 +244,9 @@ const DeletionModal = ({ isOpen, onClose, organization }: ModalProps) => {
     },
     onSuccess: () => {
       onClose();
+      queryClient.setQueryData(["Org"], (oldOrgs: Org[]) => {
+        return oldOrgs.filter((oldOrg) => oldOrg.id !== organization.id);
+      });
       router.push("/dashboard");
     },
   });
@@ -277,6 +281,7 @@ const DeletionModal = ({ isOpen, onClose, organization }: ModalProps) => {
               onClick={() => deleteOrg()}
               isLoading={isDeleting}
               color="danger"
+              size="sm"
             >
               Delete Organization
             </Button>

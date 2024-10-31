@@ -1,6 +1,7 @@
 import { supabase } from "@/db";
 import { Idea, Membership, Org } from "@/types/org";
 import { auth } from "@clerk/nextjs/server";
+
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {

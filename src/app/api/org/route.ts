@@ -2,6 +2,8 @@ import { supabase } from "@/db";
 import { Org } from "@/types/org";
 import { auth } from "@clerk/nextjs/server";
 
+export const dynamic = "force-dynamic";
+
 type PostRequest = {
   name: string;
   description: string;

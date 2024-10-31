@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { LuSearch } from "react-icons/lu";
 import { IoMdAdd } from "react-icons/io";
 
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import axios from "axios";
 import {
@@ -25,14 +25,16 @@ import Link from "next/link";
 
 type ModalProps = {
   isOpen: boolean;
+  orgs: Org[];
   onClose: () => void;
 };
 
-const CreationModal = ({ isOpen, onClose }: ModalProps) => {
+const CreationModal = ({ isOpen, onClose, orgs }: ModalProps) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
 
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const { mutate: createOrg, isPending: isCreatingOrg } = useMutation({
     mutationFn: async () => {
@@ -47,6 +49,10 @@ const CreationModal = ({ isOpen, onClose }: ModalProps) => {
       setName("");
       setDescription("");
       onClose();
+      queryClient.setQueryData(["orgs"], (old: Org[] | undefined) => {
+        if (!old) return [org];
+        return [...old, org];
+      });
       if (org) router.push(`/dashboard/${org.id}`);
     },
   });
@@ -106,7 +112,12 @@ type ProjectListProps = {
   orgs: Org[];
 };
 
-export const ProjectList = ({ orgs }: ProjectListProps) => {
+export const ProjectList = ({ orgs: organizations }: ProjectListProps) => {
+  const { data: orgs } = useQuery({
+    queryKey: ["Orgs"],
+    queryFn: async () => organizations,
+    initialData: organizations,
+  });
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <main className="flex-1 px-4 md:px-12 h-full w-full">
@@ -131,9 +142,9 @@ export const ProjectList = ({ orgs }: ProjectListProps) => {
       </section>
       <section className="w-full py-4 flex flex-col md:grid md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-12">
         {!orgs || !orgs.length ? (
-          <code className="text-center text-balance font-mono w-full h-full flex-1 grid place-items-center">
-            You have not joined or created any organizations.
-          </code>
+          <div className="text-center font-semibold p-12 text-balance text-4xl col-span-4 row-span-12 w-full h-full flex-1 grid place-items-center">
+            You have not joined <br /> or <br /> created any organizations.
+          </div>
         ) : (
           orgs.map((org) => (
             <Link
@@ -153,7 +164,7 @@ export const ProjectList = ({ orgs }: ProjectListProps) => {
             </Link>
           ))
         )}
-        <CreationModal isOpen={isOpen} onClose={onClose} />
+        <CreationModal orgs={orgs} isOpen={isOpen} onClose={onClose} />
       </section>
     </main>
   );

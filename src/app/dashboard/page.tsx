@@ -2,6 +2,9 @@ import { auth } from "@clerk/nextjs/server";
 import { ProjectList } from "./_components/ProjectList";
 import { supabase } from "@/db";
 import { Membership, Org } from "@/types/org";
+import { revalidatePath } from "next/cache";
+
+export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   const { userId } = await auth();
@@ -27,6 +30,8 @@ export default async function DashboardPage() {
     .select("*")
     .in("id", orgList)
     .returns<Org[]>();
+
+  revalidatePath("/dashboard");
 
   if (orgsError || !orgs) {
     return <ProjectList userId={userId} orgs={[]} />;
