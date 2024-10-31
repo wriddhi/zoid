@@ -243,11 +243,11 @@ const DeletionModal = ({ isOpen, onClose, organization }: ModalProps) => {
       return axios.delete<string>(`/api/org?id=${organization.id}`);
     },
     onSuccess: () => {
-      onClose();
-      queryClient.setQueryData(["Org"], (oldOrgs: Org[]) => {
+      router.push("/dashboard");
+      queryClient.setQueryData(["Orgs"], (oldOrgs: Org[]) => {
         return oldOrgs.filter((oldOrg) => oldOrg.id !== organization.id);
       });
-      router.push("/dashboard");
+      onClose();
     },
   });
 
@@ -295,7 +295,7 @@ const DeletionModal = ({ isOpen, onClose, organization }: ModalProps) => {
 export const Ideas = ({ userId, members, org: organization }: Props) => {
   const [currentIdeas, setCurrentIdeas] = useState("");
   const { data: org } = useQuery({
-    queryKey: ["Org"],
+    queryKey: ["Orgs"],
     queryFn: async () => {
       return organization;
     },
