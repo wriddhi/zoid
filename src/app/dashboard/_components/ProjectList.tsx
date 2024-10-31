@@ -1,5 +1,4 @@
 "use client";
-import { useRouter } from "next/navigation";
 
 import { LuSearch } from "react-icons/lu";
 import { IoMdAdd } from "react-icons/io";
@@ -32,7 +31,6 @@ const CreationModal = ({ isOpen, onClose }: ModalProps) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
 
-  const router = useRouter();
   const queryClient = useQueryClient();
 
   const { mutate: createOrg, isPending: isCreatingOrg } = useMutation({
@@ -48,10 +46,9 @@ const CreationModal = ({ isOpen, onClose }: ModalProps) => {
       setName("");
       setDescription("");
       onClose();
-      queryClient.setQueryData(["Orgs"], (old: Org[] | undefined) => {
-        if (!old) return [org];
-        return [...old, org];
-      });
+      queryClient.setQueryData(["Orgs"], (old: Org[] | undefined) =>
+        old ? [...old, org] : [org]
+      );
     },
   });
 
