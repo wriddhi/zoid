@@ -137,11 +137,11 @@ export const ProjectList = ({ orgs: organizations }: ProjectListProps) => {
       </section>
       <section className="w-full py-4 flex flex-col md:grid md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-12">
         {!orgs || !orgs.length ? (
-          <div className="text-center font-semibold p-12 text-balance text-4xl col-span-4 row-span-12 w-full h-full flex-1 grid place-items-center">
+          <div className="text-center font-semibold p-12 text-balance text-4xl col-span-4 row-span-12 w-full h-full flex-1 grid place-items-center rounded-xl outline-dashed">
             You have not joined <br /> or <br /> created any organizations.
           </div>
         ) : (
-          orgs.map((org) => (
+          orgs.map((org, index) => (
             <Link
               href={`/dashboard/${org.id}`}
               key={org.id}

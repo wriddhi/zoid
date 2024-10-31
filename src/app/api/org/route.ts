@@ -50,12 +50,10 @@ export async function POST(request: Request) {
     });
   }
 
-  return Response.redirect(`${baseUrl(request)}/dashboard/${data.id}`, 302);
-
-  // return new Response(JSON.stringify(data), {
-  //   status: 201,
-  //   statusText: "Created",
-  // });
+  return new Response(JSON.stringify(data), {
+    status: 201,
+    statusText: "Created",
+  });
 }
 
 type PutRequest = PostRequest & {
