@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Idea, Org, PublicUser } from "@/types/org";
+import { Idea, Membership, Org, PublicUser } from "@/types/org";
 
 import {
   Button,
@@ -29,6 +29,7 @@ import {
   Snippet,
   Chip,
   Textarea,
+  Checkbox,
 } from "@/components/ui";
 
 import {
@@ -292,7 +293,112 @@ const DeletionModal = ({ isOpen, onClose, organization }: ModalProps) => {
   );
 };
 
-export const Ideas = ({ userId, members, org }: Props) => {
+const MembersModal = ({
+  isOpen,
+  onClose,
+  members,
+  organization,
+  isOwner,
+  ideas,
+}: ModalProps & {
+  members: Props["members"];
+  isOwner: boolean;
+  ideas: Idea[];
+}) => {
+  const queryClient = useQueryClient();
+  const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
+  const { mutate: removeUsers, isPending: isRemovingUsers } = useMutation({
+    mutationFn: async () => {
+      return axios.delete(`/api/org/invite`, {
+        data: { members: selectedMembers, organization: organization.id },
+      });
+    },
+    onMutate: () => {
+      queryClient.setQueryData(
+        ["Ideas"],
+        ideas.filter((idea) => !selectedMembers.includes(idea.author_id))
+      );
+      queryClient.setQueryData(
+        ["Members"],
+        members.filter((member) => !selectedMembers.includes(member.id))
+      );
+    },
+    onSettled: () => {
+      setSelectedMembers([]);
+      onClose();
+    },
+  });
+  return (
+    <Modal size="lg" isOpen={isOpen} onClose={onClose}>
+      <ModalContent>
+        <ModalHeader>Members</ModalHeader>
+        <ModalBody>
+          <p className="text-xs">
+            View all the members of this organization and their respective
+            roles.
+          </p>
+          <ul className="grid grid-cols-1 gap-4 my-4">
+            {members.map((member) => (
+              <li key={member.id} className="flex items-center gap-4">
+                {isOwner && (
+                  <Checkbox
+                    isDisabled={organization.owner_id === member.id}
+                    disabled={organization.owner_id === member.id}
+                    value={member.id}
+                    checked={selectedMembers.includes(member.id)}
+                    onChange={() =>
+                      setSelectedMembers((previouslySelectedMembers) =>
+                        previouslySelectedMembers.includes(member.id)
+                          ? previouslySelectedMembers.filter(
+                              (id) => id !== member.id
+                            )
+                          : [...previouslySelectedMembers, member.id]
+                      )
+                    }
+                  />
+                )}
+                <User
+                  avatarProps={{ radius: "lg", src: member.imageUrl }}
+                  description={member.email}
+                  name={member.firstName + " " + (member.lastName ?? "")}
+                >
+                  {member.email}
+                </User>
+                <Chip
+                  size="sm"
+                  radius="lg"
+                  color={
+                    organization.owner_id === member.id ? "danger" : "success"
+                  }
+                  variant="flat"
+                  className="ml-auto"
+                >
+                  {organization.owner_id === member.id ? "Owner" : "Member"}
+                </Chip>
+              </li>
+            ))}
+          </ul>
+        </ModalBody>
+        {isOwner && selectedMembers.length > 0 && (
+          <ModalFooter>
+            <Button
+              endContent={<VscTrash />}
+              onClick={() => removeUsers()}
+              color="danger"
+              size="sm"
+              isLoading={isRemovingUsers}
+            >
+              {isRemovingUsers ? "Removing" : "Remove"} {selectedMembers.length}{" "}
+              Members
+            </Button>
+          </ModalFooter>
+        )}
+      </ModalContent>
+    </Modal>
+  );
+};
+
+export const Ideas = ({ userId, members: membersDetails, org }: Props) => {
   const [currentIdeas, setCurrentIdeas] = useState("");
   const {
     isOpen: isOpenDelete,
@@ -309,10 +415,14 @@ export const Ideas = ({ userId, members, org }: Props) => {
     onOpen: onOpenInvite,
     onClose: onCloseInvite,
   } = useDisclosure();
+  const {
+    isOpen: isOpenMembers,
+    onOpen: onOpenMembers,
+    onClose: onCloseMembers,
+  } = useDisclosure();
   const queryClient = useQueryClient();
 
-  const queryKey = ["ideas", { id: org.id }];
-
+  const queryKey = ["Ideas"];
   const { data: ideas, isFetching } = useQuery({
     queryKey,
     queryFn: async () => {
@@ -322,6 +432,17 @@ export const Ideas = ({ userId, members, org }: Props) => {
     initialData: [],
     enabled: !!org.id,
   });
+
+  const { data: members } = useQuery({
+    queryKey: ["Members"],
+    queryFn: async () => {
+      return membersDetails;
+    },
+    initialData: [],
+    enabled: !!membersDetails,
+  });
+
+  const isOwner = org.owner_id === userId;
 
   const { mutate: submitIdeas, isPending: isSubmitting } = useMutation({
     mutationFn: async (optimisticIdeas: Idea[]) => {
@@ -386,11 +507,11 @@ export const Ideas = ({ userId, members, org }: Props) => {
         case "author_id":
           return (
             <User
-              avatarProps={{ radius: "lg", src: user.imageUrl }}
-              description={user.email}
-              name={user.firstName + " " + (user.lastName ?? "")}
+              avatarProps={{ radius: "lg", src: user?.imageUrl }}
+              description={user?.email}
+              name={user?.firstName + " " + (user?.lastName ?? "")}
             >
-              {user.email}
+              {user?.email}
             </User>
           );
         case "name":
@@ -560,8 +681,8 @@ export const Ideas = ({ userId, members, org }: Props) => {
             {org.description ?? "No description."}
           </p>
         </div>
-        {org.owner_id === userId && (
-          <div className="ml-auto relative flex justify-end items-center gap-2">
+        <div className="ml-auto relative flex justify-end items-center gap-2">
+          {isOwner && (
             <Button
               onClick={onOpenInvite}
               size="sm"
@@ -571,18 +692,21 @@ export const Ideas = ({ userId, members, org }: Props) => {
             >
               Invite Members
             </Button>
-            <Dropdown>
-              <DropdownTrigger>
-                <Button
-                  onClick={onOpenInvite}
-                  isIconOnly
-                  size="sm"
-                  color="primary"
-                >
-                  <TbDotsVertical className="" />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu>
+          )}
+          <Dropdown>
+            <DropdownTrigger>
+              <Button isIconOnly size="sm" color="primary">
+                <TbDotsVertical />
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu>
+              <DropdownItem
+                onClick={onOpenMembers}
+                endContent={<IoEyeOutline />}
+              >
+                View
+              </DropdownItem>
+              {isOwner ? (
                 <DropdownItem
                   endContent={<FiUserPlus />}
                   color="primary"
@@ -590,6 +714,10 @@ export const Ideas = ({ userId, members, org }: Props) => {
                 >
                   Invite
                 </DropdownItem>
+              ) : (
+                <DropdownItem aria-hidden hidden className="hidden" />
+              )}
+              {isOwner ? (
                 <DropdownItem
                   onClick={() => onOpenEdit()}
                   endContent={<VscSettingsGear />}
@@ -597,6 +725,10 @@ export const Ideas = ({ userId, members, org }: Props) => {
                 >
                   Edit
                 </DropdownItem>
+              ) : (
+                <DropdownItem aria-hidden hidden className="hidden" />
+              )}
+              {isOwner ? (
                 <DropdownItem
                   onClick={() => onOpenDelete()}
                   endContent={<IoWarningOutline />}
@@ -604,10 +736,12 @@ export const Ideas = ({ userId, members, org }: Props) => {
                 >
                   Delete
                 </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-        )}
+              ) : (
+                <DropdownItem aria-hidden hidden className="hidden" />
+              )}
+            </DropdownMenu>
+          </Dropdown>
+        </div>
       </section>
       <form
         onSubmit={(e) => {
@@ -686,6 +820,14 @@ export const Ideas = ({ userId, members, org }: Props) => {
         organization={org}
         isOpen={isOpenDelete}
         onClose={onCloseDelete}
+      />
+      <MembersModal
+        organization={org}
+        members={members}
+        ideas={ideas}
+        isOpen={isOpenMembers}
+        onClose={onCloseMembers}
+        isOwner={isOwner}
       />
     </main>
   );

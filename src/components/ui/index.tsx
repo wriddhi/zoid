@@ -26,4 +26,5 @@ export {
   ModalFooter,
   useDisclosure,
   Snippet,
+  Checkbox,
 } from "@nextui-org/react";

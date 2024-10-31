@@ -2,6 +2,7 @@ import { supabase } from "@/db";
 import { Membership, Org, PublicUser } from "@/types/org";
 import { Ideas } from "./_components/Ideas";
 import { auth, clerkClient } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
 export default async function OrganizationPage({
   params,
@@ -38,6 +39,10 @@ export default async function OrganizationPage({
     .select("member_id")
     .eq("org_id", org.id)
     .returns<Membership[]>();
+
+  if (!members?.map((member) => member.member_id)?.includes(userId)) {
+    return redirect("/dashboard");
+  }
 
   if (!members) {
     return <div>Organization has no members</div>;

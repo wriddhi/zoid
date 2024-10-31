@@ -170,3 +170,77 @@ export async function POST(request: Request) {
     },
   });
 }
+
+type DeleteRequest = {
+  members: string[];
+  organization: string;
+};
+
+export async function DELETE(request: Request) {
+  const body = await request.json();
+  const { organization, members } = body as DeleteRequest;
+
+  if (!organization || !members?.length) {
+    return new Response("Your request is missing a valid query", {
+      status: 400,
+      statusText: "Bad Request",
+    });
+  }
+
+  const { userId } = await auth();
+
+  if (!userId) {
+    return new Response("You need to sign in first", {
+      status: 401,
+      statusText: "Unauthorized",
+    });
+  }
+
+  const { data: org, error: orgError } = await supabase
+    .from("orgs")
+    .select("*")
+    .eq("id", organization)
+    .returns<Org[]>()
+    .single();
+
+  if (orgError || !org) {
+    return new Response("The organization you sent does not exist", {
+      status: 404,
+      statusText: "Not Found",
+    });
+  }
+
+  if (org.owner_id !== userId) {
+    return new Response(
+      "You need to be the owner of the organization to remove users",
+      {
+        status: 401,
+        statusText: "Unauthorized",
+      }
+    );
+  }
+
+  const { error: ideasError } = await supabase
+    .from("ideas")
+    .delete()
+    .eq("org_id", organization)
+    .in("author_id", members);
+
+  const { error: membershipError } = await supabase
+    .from("memberships")
+    .delete()
+    .eq("org_id", organization)
+    .in("member_id", members);
+
+  if (membershipError || ideasError) {
+    return new Response("Failed to delete members", {
+      status: 500,
+      statusText: "Internal Server Error",
+    });
+  }
+
+  return new Response("Successfully removed members", {
+    status: 200,
+    statusText: "OK",
+  });
+}
