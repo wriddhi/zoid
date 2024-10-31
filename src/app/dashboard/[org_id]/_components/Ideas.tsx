@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Idea, Membership, Org, PublicUser } from "@/types/org";
+import { Idea, Org, PublicUser } from "@/types/org";
 
 import {
   Button,
