@@ -25,11 +25,10 @@ import Link from "next/link";
 
 type ModalProps = {
   isOpen: boolean;
-  orgs: Org[];
   onClose: () => void;
 };
 
-const CreationModal = ({ isOpen, onClose, orgs }: ModalProps) => {
+const CreationModal = ({ isOpen, onClose }: ModalProps) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
 
@@ -49,7 +48,7 @@ const CreationModal = ({ isOpen, onClose, orgs }: ModalProps) => {
       setName("");
       setDescription("");
       onClose();
-      queryClient.setQueryData(["orgs"], (old: Org[] | undefined) => {
+      queryClient.setQueryData(["Orgs"], (old: Org[] | undefined) => {
         if (!old) return [org];
         return [...old, org];
       });
@@ -164,7 +163,7 @@ export const ProjectList = ({ orgs: organizations }: ProjectListProps) => {
             </Link>
           ))
         )}
-        <CreationModal orgs={orgs} isOpen={isOpen} onClose={onClose} />
+        <CreationModal isOpen={isOpen} onClose={onClose} />
       </section>
     </main>
   );
