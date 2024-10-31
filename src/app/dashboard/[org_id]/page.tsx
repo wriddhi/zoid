@@ -1,6 +1,5 @@
 import { supabase } from "@/db";
 import { Membership, Org, PublicUser } from "@/types/org";
-import { revalidatePath } from "next/cache";
 import { Ideas } from "./_components/Ideas";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 
@@ -12,7 +11,11 @@ export default async function OrganizationPage({
   const { userId } = await auth();
 
   if (!userId) {
-    return;
+    return (
+      <div className="text-center font-semibold p-12 text-balance text-4xl w-full h-full flex-1 grid place-items-center">
+        You are not logged in
+      </div>
+    );
   }
 
   const { data: org } = await supabase
@@ -54,8 +57,6 @@ export default async function OrganizationPage({
       return publicUser;
     })
   );
-
-  revalidatePath(`/dashboard`);
 
   return <Ideas userId={userId} members={users} org={org} />;
 }

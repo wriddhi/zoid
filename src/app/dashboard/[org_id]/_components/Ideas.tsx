@@ -292,16 +292,8 @@ const DeletionModal = ({ isOpen, onClose, organization }: ModalProps) => {
   );
 };
 
-export const Ideas = ({ userId, members, org: organization }: Props) => {
+export const Ideas = ({ userId, members, org }: Props) => {
   const [currentIdeas, setCurrentIdeas] = useState("");
-  const { data: org } = useQuery({
-    queryKey: ["Orgs"],
-    queryFn: async () => {
-      return organization;
-    },
-    initialData: organization,
-    enabled: false,
-  });
   const {
     isOpen: isOpenDelete,
     onOpen: onOpenDelete,
@@ -324,10 +316,11 @@ export const Ideas = ({ userId, members, org: organization }: Props) => {
   const { data: ideas, isFetching } = useQuery({
     queryKey,
     queryFn: async () => {
-      const { data } = await axios.get(`/api/ideas?id=${org.id}`);
-      return data as Idea[];
+      const { data } = await axios.get<Idea[]>(`/api/ideas?id=${org.id}`);
+      return data ?? [];
     },
     initialData: [],
+    enabled: !!org.id,
   });
 
   const { mutate: submitIdeas, isPending: isSubmitting } = useMutation({
@@ -667,8 +660,7 @@ export const Ideas = ({ userId, members, org: organization }: Props) => {
           loadingContent={<Spinner />}
           emptyContent={"No ideas to display."}
           items={ideas}
-        >
-          {(item) => (
+          children={(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (
                 <TableCell>
@@ -677,7 +669,7 @@ export const Ideas = ({ userId, members, org: organization }: Props) => {
               )}
             </TableRow>
           )}
-        </TableBody>
+        />
       </Table>
       <InvitationModal
         organization={org}

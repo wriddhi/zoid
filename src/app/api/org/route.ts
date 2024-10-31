@@ -1,4 +1,5 @@
 import { supabase } from "@/db";
+import { baseUrl } from "@/lib/utils";
 import { Org } from "@/types/org";
 import { auth } from "@clerk/nextjs/server";
 
@@ -49,10 +50,12 @@ export async function POST(request: Request) {
     });
   }
 
-  return new Response(JSON.stringify(data), {
-    status: 201,
-    statusText: "Created",
-  });
+  return Response.redirect(`${baseUrl(request)}/dashboard/${data.id}`, 302);
+
+  // return new Response(JSON.stringify(data), {
+  //   status: 201,
+  //   statusText: "Created",
+  // });
 }
 
 type PutRequest = PostRequest & {
