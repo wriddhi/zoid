@@ -660,7 +660,8 @@ export const Ideas = ({ userId, members, org }: Props) => {
           loadingContent={<Spinner />}
           emptyContent={"No ideas to display."}
           items={ideas}
-          children={(item) => (
+        >
+          {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (
                 <TableCell>
@@ -669,7 +670,7 @@ export const Ideas = ({ userId, members, org }: Props) => {
               )}
             </TableRow>
           )}
-        />
+        </TableBody>
       </Table>
       <InvitationModal
         organization={org}
