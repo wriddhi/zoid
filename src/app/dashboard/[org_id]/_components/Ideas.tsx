@@ -38,7 +38,12 @@ import {
   PiArrowFatDown,
   PiArrowFatDownFill,
 } from "react-icons/pi";
-import { SiGodaddy, SiNamecheap, SiSpaceship } from "react-icons/si";
+import {
+  SiGodaddy,
+  SiNamecheap,
+  SiSpaceship,
+  SiCloudflare,
+} from "react-icons/si";
 import { TbWorldSearch, TbDotsVertical } from "react-icons/tb";
 import { FiUserPlus } from "react-icons/fi";
 import { VscTrash, VscSettingsGear } from "react-icons/vsc";
@@ -555,6 +560,16 @@ export const Ideas = ({ userId, members: membersDetails, org }: Props) => {
                   href={Verifications.SpaceShip(idea.name)}
                 >
                   <SiSpaceship />
+                </a>
+              </Tooltip>
+              <Tooltip content="Cloudflare">
+                <a
+                  aria-label="Cloudflare"
+                  className="text-lg"
+                  target="_blank"
+                  href={Verifications.Cloudflare(idea.name)}
+                >
+                  <SiCloudflare />
                 </a>
               </Tooltip>
             </div>

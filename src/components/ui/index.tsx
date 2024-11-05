@@ -27,4 +27,6 @@ export {
   useDisclosure,
   Snippet,
   Checkbox,
+  Accordion,
+  AccordionItem,
 } from "@nextui-org/react";

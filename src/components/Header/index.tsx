@@ -13,6 +13,7 @@ import { Button } from "@/components/ui";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useState } from "react";
+import { Navbar } from "@/components/Navbar";
 
 // const HamBurgerButton = () => {
 //   const [open, setOpen] = useState(false);
@@ -51,7 +52,7 @@ export const Header = () => {
   const [redirect, setRedirect] = useState<"sign-in" | "sign-up">();
 
   return (
-    <header className="w-full flex py-3 px-6 md:px-12 justify-between items-center">
+    <header className="w-full grid grid-cols-[1fr_8fr_1fr] py-3 px-6 md:px-12 justify-between items-center">
       <Link href="/">
         <Image
           priority
@@ -62,6 +63,7 @@ export const Header = () => {
           quality={1}
         />
       </Link>
+      <Navbar />
       <div className="flex gap-2 items-center">
         <SignedOut>
           <Button

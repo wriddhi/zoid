@@ -5,6 +5,13 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const highlight = cn(
+  "text-white",
+  "font-semibold",
+  "[text-shadow:-1px_2px_0_black]",
+  "[-webkit-text-stroke:1px_black]"
+);
+
 export function timeAgo(createdAt: string): string {
   const createdDate = new Date(createdAt);
   const now = new Date();
