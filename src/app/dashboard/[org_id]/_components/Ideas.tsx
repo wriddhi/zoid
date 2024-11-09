@@ -689,7 +689,9 @@ export const Ideas = ({ userId, members: membersDetails, org }: Props) => {
   return (
     <main className="flex-1 px-4 md:px-12 h-full w-full flex flex-col gap-6 mb-20">
       <section className="w-full flex justify-start items-center gap-4">
-        <Link href="/dashboard">&lt;-</Link>
+        <Link prefetch={true} href="/dashboard">
+          &lt;-
+        </Link>
         <div>
           <h1 className="font-semibold text-2xl md:text-4xl">{org.name}</h1>
           <p className="text-xs md:text-sm text-gray-500">

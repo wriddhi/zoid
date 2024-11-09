@@ -53,7 +53,7 @@ export const Header = () => {
 
   return (
     <header className="w-full grid grid-cols-[1fr_8fr_1fr] py-3 px-6 md:px-12 justify-between items-center">
-      <Link href="/">
+      <Link prefetch={true} href="/">
         <Image
           priority
           src="/zoid.svg"

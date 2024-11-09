@@ -1,6 +1,6 @@
 "use client";
 
-import { cn, highlight } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { Accordion, AccordionItem } from "@/components/ui";
 
 type FAQItem = {
@@ -35,7 +35,10 @@ export const FAQ = () => {
       <h1
         className={cn(
           "text-6xl sm:text-8xl tracking-tight leading-none text-center",
-          highlight
+          "text-white",
+          "font-semibold",
+          "[text-shadow:-1px_2px_0_black]",
+          "[-webkit-text-stroke:1px_black]"
         )}
       >
         FAQ.

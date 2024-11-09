@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui";
-import { highlight } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 export const Hero = () => {
   return (
@@ -9,9 +9,27 @@ export const Hero = () => {
     >
       <h1 className="text-6xl sm:text-8xl tracking-tight leading-none font-medium text-center text-balance">
         Craft a {""}
-        <span className={highlight}>brand {""}</span>
+        <span
+          className={cn(
+            "text-white",
+            "font-semibold",
+            "[text-shadow:-1px_2px_0_black]",
+            "[-webkit-text-stroke:1px_black]"
+          )}
+        >
+          brand {""}
+        </span>
         as unique <br /> as {""}
-        <span className={highlight}>you.</span>
+        <span
+          className={cn(
+            "text-white",
+            "font-semibold",
+            "[text-shadow:-1px_2px_0_black]",
+            "[-webkit-text-stroke:1px_black]"
+          )}
+        >
+          you.
+        </span>
       </h1>
       <p className="w-full text-center md:text-balance tracking-wider">
         <b className="font-mono font-extrabold">Zoid</b> helps you{" "}

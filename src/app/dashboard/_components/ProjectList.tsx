@@ -4,7 +4,7 @@ import { LuSearch } from "react-icons/lu";
 import { IoMdAdd } from "react-icons/io";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import axios from "axios";
 import {
   Input,
@@ -30,6 +30,8 @@ type ModalProps = {
 const CreationModal = ({ isOpen, onClose }: ModalProps) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+
+  const formRef = useRef<HTMLFormElement>(null);
 
   const queryClient = useQueryClient();
 
@@ -62,6 +64,7 @@ const CreationModal = ({ isOpen, onClose }: ModalProps) => {
             brainstorm with your new team.
           </p>
           <form
+            ref={formRef}
             onSubmit={(e) => {
               e.preventDefault();
               createOrg();
@@ -90,7 +93,7 @@ const CreationModal = ({ isOpen, onClose }: ModalProps) => {
         </ModalBody>
         <ModalFooter>
           <Button
-            onClick={() => createOrg()}
+            onClick={() => formRef.current?.requestSubmit()}
             isLoading={isCreatingOrg}
             color="primary"
           >
@@ -143,6 +146,7 @@ export const ProjectList = ({ orgs: organizations }: ProjectListProps) => {
         ) : (
           orgs.map((org) => (
             <Link
+              prefetch={true}
               href={`/dashboard/${org.id}`}
               key={org.id}
               className="flex flex-col gap-1 outline-1 outline-dashed rounded-xl p-6 focus:outline-2 hover:outline-2    "

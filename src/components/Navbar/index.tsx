@@ -31,6 +31,7 @@ export const Navbar = () => {
     >
       {navItems.map((item) => (
         <Link
+          prefetch={true}
           key={item.title}
           className="font-semibold font-mono"
           href={item.href}
