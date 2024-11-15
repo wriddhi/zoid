@@ -38,13 +38,7 @@ import {
   PiArrowFatDown,
   PiArrowFatDownFill,
 } from "react-icons/pi";
-import {
-  SiGodaddy,
-  SiNamecheap,
-  SiSpaceship,
-  SiCloudflare,
-} from "react-icons/si";
-import { TbWorldSearch, TbDotsVertical } from "react-icons/tb";
+import { TbDotsVertical } from "react-icons/tb";
 import { FiUserPlus } from "react-icons/fi";
 import { VscTrash, VscSettingsGear } from "react-icons/vsc";
 import { IoEyeOutline, IoWarningOutline } from "react-icons/io5";
@@ -54,7 +48,7 @@ import axios from "axios";
 import { nanoid } from "nanoid";
 
 import { cn, prettyTimeStamp, timeAgo } from "@/lib/utils";
-import { Verifications } from "@/data";
+import { VerificationKey, Verifications } from "@/data";
 import Link from "next/link";
 type Props = {
   userId: string;
@@ -63,7 +57,7 @@ type Props = {
 };
 
 type Column = {
-  uid: keyof Idea | "actions" | "domains" | "trademarks";
+  uid: keyof Idea | "actions" | VerificationKey;
   name: string;
 };
 
@@ -71,8 +65,9 @@ const columns: Column[] = [
   { uid: "name", name: "NAME" },
   { uid: "author_id", name: "PROPOSED BY" },
   { uid: "created_at", name: "SUBMITTED ON" },
-  { uid: "domains", name: "DOMAINS" },
-  { uid: "trademarks", name: "TRADEMARKS" },
+  { uid: "Domains", name: "DOMAINS" },
+  { uid: "Socials", name: "SOCIALS" },
+  { uid: "TradeMarks", name: "TRADEMARKS" },
   { uid: "votes", name: "VOTES" },
   { uid: "actions", name: "ACTIONS" },
 ];
@@ -529,63 +524,23 @@ export const Ideas = ({ userId, members: membersDetails, org }: Props) => {
               </code>
             </Tooltip>
           );
-        case "domains":
+        case "Domains":
+        case "Socials":
+        case "TradeMarks":
           return (
-            <div className="flex items-center gap-4">
-              <Tooltip content="GoDaddy">
-                <a
-                  aria-label="GoDaddy"
-                  className="text-xs"
-                  target="_blank"
-                  href={Verifications.GoDaddy(idea.name)}
-                >
-                  <SiGodaddy />
-                </a>
-              </Tooltip>
-              <Tooltip content="Namecheap">
-                <a
-                  aria-label="Namecheap"
-                  className="text-xs"
-                  target="_blank"
-                  href={Verifications.Namecheap(idea.name)}
-                >
-                  <SiNamecheap />
-                </a>
-              </Tooltip>
-              <Tooltip content="SpaceShip">
-                <a
-                  aria-label="SpaceShip"
-                  className="text-xs"
-                  target="_blank"
-                  href={Verifications.SpaceShip(idea.name)}
-                >
-                  <SiSpaceship />
-                </a>
-              </Tooltip>
-              <Tooltip content="Cloudflare">
-                <a
-                  aria-label="Cloudflare"
-                  className="text-lg"
-                  target="_blank"
-                  href={Verifications.Cloudflare(idea.name)}
-                >
-                  <SiCloudflare />
-                </a>
-              </Tooltip>
+            <div className="flex items-center gap-3">
+              {Object.values(Verifications[columnKey]).map((verification) => (
+                <Tooltip key={verification.name} content={verification.name}>
+                  <a
+                    href={verification.verify(idea.name)}
+                    target="_blank"
+                    className="text-base"
+                  >
+                    {verification.icon}
+                  </a>
+                </Tooltip>
+              ))}
             </div>
-          );
-        case "trademarks":
-          return (
-            <Tooltip content="World Intellectual Property Organization">
-              <a
-                aria-label="World Intellectual Property Organization"
-                className="text-xs bg-red-500"
-                target="_blank"
-                href={Verifications.WIPO(idea.name)}
-              >
-                <TbWorldSearch className="size-4 mx-auto" />
-              </a>
-            </Tooltip>
           );
         case "votes":
           return (
